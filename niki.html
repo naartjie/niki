@@ -1,0 +1,40 @@
+<head>
+  <title>niki wiki notes</title>
+</head>
+
+<body>
+  {{> main}}
+</body>
+
+<template name="main">
+  {{#if note_selected}}
+    {{> note}}
+  {{/if}}
+  {{#unless note_selected}}
+    <div>Select a note to edit</div>
+  {{/unless}}
+  <hr />
+  {{> notes}}  
+</template>
+
+<template name="note">
+  {{#with current_note}}
+    <div class="note_text">
+      {{{current_note_html}}}
+    </div>
+  
+    <input type="button" value="Update" />
+  
+    <div id="note_source">
+      <textarea id="note_textarea">{{text}}</textarea>
+    </div>
+  {{/with}}  
+</template>
+
+<template name="notes">
+  {{#each notes}}
+    <div class="note_list">
+      {{name}} &gt;&gt; {{text}}
+    </div>
+  {{/each}}
+</template>

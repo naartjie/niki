@@ -1,0 +1,7 @@
+.note_list {
+  cursor: pointer;
+}
+.note_link {
+  text-decoration: underline;
+  cursor: pointer;
+}
