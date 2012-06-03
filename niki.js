@@ -12,15 +12,7 @@ if (Meteor.is_client) {
   
   Template.note.current_note_html = function() {
     var t = Notes.findOne(Session.get("current_note")).text;
-    return t.replace(/\?(\w+)/g, "<span class='note_link'>$1</span>");
-  }
-  
-  function click_link(e) {
-    // console.log(e);
-    // console.log(this);
-    console.log("onclick event fired");
-    
-    
+    return t.replace(/\?(\w+)/g, "<span class='note_link' id='$1'>$1</span>");
   }
   
   Template.note.events = {
@@ -29,12 +21,11 @@ if (Meteor.is_client) {
       var note = Notes.findOne(Session.get("current_note"));
       Notes.update(Session.get("current_note"), {$set: {text: new_text}});
     },
-    'click a_not' : function() {
-      console.log("clicked note link " + document.URL);
+    'click span.note_link' : function(e) {
+      console.log("clicked note link " + e.target.id);
       
       // find note
-      // todo
-      var name = "root";
+      var name = e.target.id;
       var note = Notes.findOne({name: name});
       
       if (note == null) {
