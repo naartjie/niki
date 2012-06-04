@@ -53,11 +53,8 @@ if (Meteor.is_client) {
 
   Template.notes.events = {
     'click span.delete_note_button': function(e) {
-      console.log("click delete button");
       var note_name = e.target.id;
-      
       if (note_name !== "root") {
-        console.log("deleting " + note_name + " with id " + Notes.findOne({name: note_name})._id);
         Notes.remove(Notes.findOne({name: note_name})._id);
       }
     },
