@@ -22,16 +22,13 @@ if (Meteor.is_client) {
       Notes.update(Session.get("current_note"), {$set: {text: new_text}});
     },
     'click span.note_link' : function(e) {
-      console.log("clicked note link " + e.target.id);
-      
-      // find note
-      var name = e.target.id;
-      var note = Notes.findOne({name: name});
+      var note_name = e.target.id;
+      var note = Notes.findOne({name: note_name});
       
       if (note == null) {
         // create a new note with name
         note = {
-          name: name,
+          name: note_name,
           text: ""
         };
         var id = Notes.insert(note);
@@ -39,8 +36,9 @@ if (Meteor.is_client) {
       } else {
         Session.set("current_note", note._id);
       }
-      var textarea = document.getElementById("note_textarea");
-      textarea.value = note.text;
+      
+      // refresh textarea
+      document.getElementById("note_textarea").value = note.text;
     }
   };  
 
@@ -49,8 +47,21 @@ if (Meteor.is_client) {
     return notes;
   };
 
+  Template.notes.root_note = function() {
+    return (this.name === "root");
+  }
+
   Template.notes.events = {
-    'click': function () {
+    'click span.delete_note_button': function(e) {
+      console.log("click delete button");
+      var note_name = e.target.id;
+      
+      if (note_name !== "root") {
+        console.log("deleting " + note_name + " with id " + Notes.findOne({name: note_name})._id);
+        Notes.remove(Notes.findOne({name: note_name})._id);
+      }
+    },
+    'click span.note_details': function () {
       Session.set("current_note", this._id);
       var textarea = document.getElementById("note_textarea");
       if (textarea != null) {

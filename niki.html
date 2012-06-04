@@ -34,7 +34,10 @@
 <template name="notes">
   {{#each notes}}
     <div class="note_list">
-      {{name}} &gt;&gt; {{text}}
+      {{#unless root_note}}
+        <span class="delete_note_button" id="{{name}}">X</span>
+      {{/unless}}
+      <span class="note_details">{{name}} &gt;&gt; {{text}}</span>
     </div>
   {{/each}}
 </template>
