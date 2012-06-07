@@ -15,6 +15,15 @@ if (Meteor.is_client) {
     return t.replace(/\?(\w+)/g, "<span class='note_link' id='$1'>$1</span>");
   }
   
+  saveNoteText = function() {
+    var new_text = document.getElementById("note_text").value;
+    
+    console.log("saving : " + new_text);
+    
+    var note = Notes.findOne(Session.get("current_note"));
+    Notes.update(Session.get("current_note"), {$set: {text: new_text}});
+  }
+  
   Template.note.events = {
     'click input' : function () {
       var new_text = document.getElementById("note_textarea").value;

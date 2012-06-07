@@ -19,7 +19,7 @@
 
 <template name="note">
   {{#with current_note}}
-    <div class="note_text" onClick="this.contentEditable='true';">
+    <div id="note_text" class="note_text" onClick="this.contentEditable='true';" onKeyUp="saveNoteText">
       {{{current_note_html}}}
     </div>
   
