@@ -19,15 +19,15 @@
 
 <template name="note">
   {{#with current_note}}
-    <div class="note_text">
+    <div class="note_text" onClick="this.contentEditable='true';">
       {{{current_note_html}}}
     </div>
   
-    <input type="button" value="Update" />
-  
-    <div id="note_source">
-      <textarea cols="50" rows="12" id="note_textarea">{{text}}</textarea>
-    </div>
+   <input type="button" value="Update" />
+
+   <div id="note_source">
+     <textarea cols="50" rows="12" id="note_textarea">{{text}}</textarea>
+   </div>
   {{/with}}  
 </template>
 
