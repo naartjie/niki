@@ -17,14 +17,24 @@ if (Meteor.is_client) {
   
   function save_note_text() {
     var new_text = document.getElementById("note_text").innerHTML;
-	
-	// todo, escape all html
-	
+    new_text = escape_html(new_text);
     var note = Notes.findOne(Session.get("current_note"));
-  
-    //console.log("saving : " + new_text + " ==> " + note.name + ">>" + note.text);
-  
-    Notes.update(Session.get("current_note"), {$set: {text: new_text}});
+      
+    console.log("saving : " + new_text);
+    //Notes.update(Session.get("current_note"), {$set: {text: new_text}});
+  }
+
+  function escape_html(text) {
+    new_text = text.trim();
+    
+    new_text = new_text
+      .replace(/<br>/g, "\n")
+      .replace(/<div>/g, "\n")
+      .replace(/<\/div>/g, "")
+      .replace(/<span \w+=\"\w+\" \w+=\"\w+\">(\w+)<\/span>/g, "?$1")
+      .replace(/&nbsp;/g, " ");
+      
+    return new_text;
   }
   
   Template.note.events = {
