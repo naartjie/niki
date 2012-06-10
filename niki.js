@@ -2,47 +2,60 @@ Notes = new Meteor.Collection("notes");
 
 if (Meteor.is_client) {
   Template.main.note_selected = function() {
-    var note = Notes.findOne(Session.get("current_note"));
+    var note = current_note();
     return note && note.name;
   };
     
   Template.note.current_note = function() {
-    return Notes.findOne(Session.get("current_note"));
+    return current_note();
   };
   
   Template.note.current_note_html = function() {
-    var t = Notes.findOne(Session.get("current_note")).text;
-    return t.replace(/\?(\w+)/g, "<span class='note_link' id='$1'>$1</span>");
-  }
+    
+    return "static text here";
+    
+    // var text = Notes.findOne(Session.get("current_note")).text;
+    // return text_to_html(text);
+  };
   
-  function save_note_text() {
-    var new_text = document.getElementById("note_text").innerHTML;
-    new_text = escape_html(new_text);
-    var note = Notes.findOne(Session.get("current_note"));
-      
-    console.log("saving : " + new_text);
-    //Notes.update(Session.get("current_note"), {$set: {text: new_text}});
+  function current_note() {
+    return Notes.findOne(Session.get("current_note"));
   }
 
-  function escape_html(text) {
-    new_text = text.trim();
+  function set_current_note(id) {
+    Session.set("current_note", id);
+    var text = current_note().text;
     
-    new_text = new_text
-      .replace(/<br>/g, "\n")
-      .replace(/<div>/g, "\n")
-      .replace(/<\/div>/g, "")
-      .replace(/<span \w+=\"\w+\" \w+=\"\w+\">(\w+)<\/span>/g, "?$1")
-      .replace(/&nbsp;/g, " ");
+    console.log("setting div html to: " + text_to_html(text));
+    document.getElementById("note_text").innerHTML = text_to_html(text);
+  }  
+  
+  function save_note_text() {
+    var new_text = html_to_text(document.getElementById("note_text").innerHTML);
+    var note = current_note();
       
-    return new_text;
+    console.log("saving: \n" + new_text);
+    Notes.update(note, {$set: {text: new_text}});
+  };
+
+  function text_to_html(text) {
+    // todo: convert newlines
+    return text.replace(/\?(\w+)/g, "<span class='note_link' id='$1'>$1</span>");
   }
+
+  function html_to_text(html) {
+    var text = html
+        .replace(/<br>/g, "\n")
+        .replace(/<div>/g, "\n")
+        .replace(/<\/div>/g, "")
+        .replace(/<span \w+=\"\w+\" \w+=\"\w+\">(\w+)<\/span>/g, "?$1")
+        .replace(/&nbsp;/g, " ")
+        .trim();
+      
+    return text;
+  };
   
   Template.note.events = {
-    'click input' : function () {
-      var new_text = document.getElementById("note_textarea").value;
-      var note = Notes.findOne(Session.get("current_note"));
-      Notes.update(Session.get("current_note"), {$set: {text: new_text}});
-    },
     'click span.note_link' : function(e) {
       var note_name = e.target.id;
       var note = Notes.findOne({name: note_name});
@@ -54,13 +67,10 @@ if (Meteor.is_client) {
           text: ""
         };
         var id = Notes.insert(note);
-        Session.set("current_note", id);
+        set_current_note(id);
       } else {
-        Session.set("current_note", note._id);
+        set_current_note(note._id);
       }
-      
-      // refresh textarea
-      document.getElementById("note_textarea").value = note.text;
     }
   };  
 
@@ -71,7 +81,7 @@ if (Meteor.is_client) {
 
   Template.notes.root_note = function() {
     return (this.name === "root");
-  }
+  };
 
   Template.notes.events = {
     'click span.delete_note_button': function(e) {
@@ -81,11 +91,7 @@ if (Meteor.is_client) {
       }
     },
     'click span.note_details': function () {
-      Session.set("current_note", this._id);
-      var textarea = document.getElementById("note_textarea");
-      if (textarea != null) {
-        textarea.value = this.text;
-      }
+      set_current_note(this._id);
     }
   };
 }
